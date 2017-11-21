@@ -312,6 +312,9 @@ include_directories(okvis_multisensor_processing/include)
 add_subdirectory(okvis_multisensor_processing)
 add_dependencies(okvis_multisensor_processing okvis_util)
 
+include_directories(okvis_viewer/include)
+add_subdirectory(okvis_viewer)
+
 # also build the apps
 if(BUILD_APPS)
   FIND_PACKAGE(Boost COMPONENTS filesystem system REQUIRED)
@@ -331,10 +334,31 @@ if(BUILD_APPS)
     pthread 
     ${Boost_LIBRARIES}
   )
+  add_executable(okvis_app_synchronous_viewer okvis_apps/src/okvis_app_synchronous_viewer.cpp)
+  target_link_libraries(okvis_app_synchronous_viewer 
+    okvis_util
+    okvis_kinematics
+    okvis_time
+    okvis_cv 
+    okvis_common
+    okvis_ceres
+    okvis_timing
+    okvis_matcher
+    okvis_frontend 
+    okvis_multisensor_processing
+    okvis_viewer
+    pthread 
+    ${Boost_LIBRARIES}
+  )
   if(${VISENSORDRIVER_FOUND})
     target_link_libraries(okvis_app_synchronous ${VISensorDriver_LIBRARY})
+    target_link_libraries(okvis_app_synchronous_viewer ${VISensorDriver_LIBRARY})
   endif()
   install(TARGETS okvis_app_synchronous
+    # IMPORTANT: Add the executable to the "export-set"
+    EXPORT okvisTargets
+    RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin)
+  install(TARGETS okvis_app_synchronous_viewer
     # IMPORTANT: Add the executable to the "export-set"
     EXPORT okvisTargets
     RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin)
@@ -343,6 +367,7 @@ endif()
 # installation is invoked in the individual modules...
 export (TARGETS 
     okvis_app_synchronous
+    okvis_app_synchronous_viewer
     okvis_util
     okvis_kinematics
     okvis_time

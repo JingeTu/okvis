@@ -29,3 +29,16 @@
 
 # Docu
 documentation/html/
+documentation/latex/
+
+# Build
+build/
+
+# Run shell
+run_viewer.sh
+
+# IDE and Text Editor
+.vscode/
+
+# My Run Shell
+run_viewer.sh
